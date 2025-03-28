@@ -36,12 +36,6 @@ const Home = () => {
                     Connect Wallet
                   </button>
                 )}
-                <a 
-                  href="#learn-more" 
-                  className="px-8 py-3 bg-transparent border-2 border-white rounded-full font-bold text-lg hover:bg-white hover:bg-opacity-10 transition duration-300"
-                >
-                  Learn More
-                </a>
               </div>
             </div>
             <div className="relative">
@@ -67,7 +61,7 @@ const Home = () => {
       </section>
 
       {/* Features Section */}
-      <section id="learn-more" className="py-20 bg-white">
+      <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-center mb-16 text-gray-800">
             A Truly <span className="text-indigo-600">Decentralized</span> NFT Platform

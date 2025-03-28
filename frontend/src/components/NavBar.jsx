@@ -39,28 +39,16 @@ function NavBar() {
             </Link>
             
             {user && (
-              <>
-                <Link 
-                  to="/purchase" 
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                    isActive('/purchase') 
-                      ? 'text-indigo-600 bg-indigo-50' 
-                      : 'text-gray-700 hover:text-indigo-600 hover:bg-gray-50'
-                  }`}
-                >
-                  Purchase NFT
-                </Link>
-                <Link 
-                  to="/dashboard" 
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                    isActive('/dashboard') 
-                      ? 'text-indigo-600 bg-indigo-50' 
-                      : 'text-gray-700 hover:text-indigo-600 hover:bg-gray-50'
-                  }`}
-                >
-                  Dashboard
-                </Link>
-              </>
+              <Link 
+                to="/purchase" 
+                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  isActive('/purchase') 
+                    ? 'text-indigo-600 bg-indigo-50' 
+                    : 'text-gray-700 hover:text-indigo-600 hover:bg-gray-50'
+                }`}
+              >
+                Purchase NFT
+              </Link>
             )}
           </div>
 
@@ -120,30 +108,17 @@ function NavBar() {
           </Link>
           
           {user && (
-            <>
-              <Link
-                to="/purchase"
-                className={`block px-3 py-2 rounded-md text-base font-medium ${
-                  isActive('/purchase') 
-                    ? 'text-indigo-600 bg-indigo-50' 
-                    : 'text-gray-700 hover:text-indigo-600 hover:bg-gray-50'
-                }`}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Purchase NFT
-              </Link>
-              <Link
-                to="/dashboard"
-                className={`block px-3 py-2 rounded-md text-base font-medium ${
-                  isActive('/dashboard') 
-                    ? 'text-indigo-600 bg-indigo-50' 
-                    : 'text-gray-700 hover:text-indigo-600 hover:bg-gray-50'
-                }`}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Dashboard
-              </Link>
-            </>
+            <Link
+              to="/purchase"
+              className={`block px-3 py-2 rounded-md text-base font-medium ${
+                isActive('/purchase') 
+                  ? 'text-indigo-600 bg-indigo-50' 
+                  : 'text-gray-700 hover:text-indigo-600 hover:bg-gray-50'
+              }`}
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Purchase NFT
+            </Link>
           )}
         </div>
         
