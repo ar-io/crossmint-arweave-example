@@ -9,7 +9,7 @@ async function setUndername() {
         }
         
         // Use the updated transaction ID
-        const manifestId = '-Sah_yiRQgsVK7nY65wDTn16tRiu5Y5ucHpyXGamiCc';
+        const manifestId = 'MxwKVOHvldSiIdZ83rTP_KZ0OAX6esKqaTq1SyK3UKo';
         
         console.log(`Using manifest ID: ${manifestId}`);
 

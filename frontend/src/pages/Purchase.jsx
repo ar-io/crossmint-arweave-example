@@ -41,25 +41,39 @@ const Purchase = () => {
       setIsLoading(true);
       setError(null);
       
+      const email = user?.email || '';
+      if (!email) {
+        throw new Error('User email not found. Please ensure you are logged in.');
+      }
+
+      const requestBody = {
+        recipient: {
+          email: email
+        },
+        payment: {
+          method: 'base-sepolia',
+          currency: 'eth',
+          payerAddress: payerAddress,
+          receiptEmail: email
+        },
+        lineItems: {
+          collectionLocator: `crossmint:${collectionId}`,
+          callData: {
+            totalPrice: '0.01'
+          }
+        }
+      };
+
+      // Log the request body for debugging
+      console.log('Request Body:', JSON.stringify(requestBody, null, 2));
+
       const response = await fetch('https://staging.crossmint.com/api/2022-06-09/orders', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'x-api-key': apiKey
         },
-        body: JSON.stringify({
-          payment: {
-            method: 'base-sepolia',
-            currency: 'eth',
-            payerAddress: payerAddress
-          },
-          lineItems: {
-            collectionLocator: `crossmint:${collectionId}`,
-            callData: {
-              totalPrice: '0.01'
-            }
-          }
-        })
+        body: JSON.stringify(requestBody)
       });
 
       if (!response.ok) {
@@ -68,14 +82,17 @@ const Purchase = () => {
       }
 
       const data = await response.json();
-      setOrderId(data.orderId);
+      console.log('Response:', data); // Log the response for debugging
       
-      // Update the order with recipient info
-      await updateOrderWithRecipient(data.orderId);
+      setOrderId(data.orderId);
+      setSerializedTransaction(data.order?.payment?.preparation?.serializedTransaction);
+      setOrderStatus('ready_for_payment');
+      setIsLoading(false);
       
     } catch (err) {
       setError(err.message);
       setIsLoading(false);
+      console.error('Full error:', err); // Log the full error for debugging
     }
   };
 
