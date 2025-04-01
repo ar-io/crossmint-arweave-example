@@ -64,9 +64,6 @@ const Purchase = () => {
         }
       };
 
-      // Log the request body for debugging
-      console.log('Request Body:', JSON.stringify(requestBody, null, 2));
-
       const response = await fetch('https://staging.crossmint.com/api/2022-06-09/orders', {
         method: 'POST',
         headers: {
@@ -76,23 +73,49 @@ const Purchase = () => {
         body: JSON.stringify(requestBody)
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to create order');
-      }
-
-      const data = await response.json();
-      console.log('Response:', data); // Log the response for debugging
+      // Get the raw response text and clean it
+      let rawResponse = await response.text();
+      console.log('Raw response type:', typeof rawResponse);
+      console.log('Raw response length:', rawResponse.length);
       
-      setOrderId(data.orderId);
-      setSerializedTransaction(data.order?.payment?.preparation?.serializedTransaction);
-      setOrderStatus('ready_for_payment');
+      // Clean and parse in separate steps for debugging
+      let cleanedResponse = rawResponse.replace(/^\uFEFF/, '').trim();
+      console.log('Cleaned response length:', cleanedResponse.length);
+      
+      try {
+        // Parse in a separate try block
+        const parsedData = JSON.parse(cleanedResponse);
+        console.log('Successfully parsed response:', parsedData);
+        
+        // Extract needed data
+        const orderId = parsedData.order?.orderId;
+        const serializedTx = parsedData.order?.payment?.preparation?.serializedTransaction;
+        
+        console.log('Extracted orderId:', orderId);
+        console.log('Extracted serializedTx:', serializedTx);
+        
+        console.log('Order object:', parsedData.order);
+        
+        if (orderId && serializedTx) {
+          setOrderId(orderId);
+          setSerializedTransaction(serializedTx);
+          setOrderStatus('ready_for_payment');
+          console.log('State updated successfully');
+        } else {
+          throw new Error('Missing required data in response');
+        }
+      } catch (parseError) {
+        console.error('Parse error:', parseError);
+        console.error('Failed to parse response:', cleanedResponse);
+        throw new Error(`Failed to parse response: ${parseError.message}`);
+      }
+      
       setIsLoading(false);
       
     } catch (err) {
       setError(err.message);
       setIsLoading(false);
-      console.error('Full error:', err); // Log the full error for debugging
+      console.error('Error in createOrder:', err);
     }
   };
 
@@ -176,12 +199,27 @@ const Purchase = () => {
       if (!window.ethereum) {
         throw new Error('MetaMask is not installed');
       }
+
+      // Log the transaction data
+      console.log('Processing transaction:', serializedTransaction);
+      
+      // Convert the hex string to transaction parameters
+      const transactionParams = {
+        from: window.ethereum.selectedAddress, // Add the sender address
+        to: '0xa105c311fa72b8fb78c992ecbdb8b02ea5bd394d', // Extract from the serialized tx
+        data: serializedTransaction, // Use the serialized data as the data field
+        value: '0x00' // Since this is a contract interaction
+      };
+
+      console.log('Sending transaction with params:', transactionParams);
       
       // Request wallet to send transaction
-      await window.ethereum.request({
+      const txResponse = await window.ethereum.request({
         method: 'eth_sendTransaction',
-        params: [JSON.parse(serializedTransaction)]
+        params: [transactionParams]
       });
+      
+      console.log('Transaction sent:', txResponse);
       
       setOrderStatus('payment_processing');
       setIsLoading(false);
@@ -192,6 +230,7 @@ const Purchase = () => {
     } catch (err) {
       setError(err.message);
       setIsLoading(false);
+      console.error('Transaction error:', err);
     }
   };
 
